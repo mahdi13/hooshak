@@ -10,3 +10,8 @@ Before installing the package, you should install igraph:
 ```
 sudo apt-get install -y libigraph0-dev
 ```
+
+And run setup:
+```
+pip install -e .
+```
