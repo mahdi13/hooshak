@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 dependencies = [
-    'gremlinpython',
+    'python-igraph',
 
     # Testing
     'nose',
@@ -11,7 +11,7 @@ dependencies = [
 setup(
     name='hooshak',
     version='0.0.1',
-    description='A toolchain for developing REST APIs',
+    description='A recommender system uses implicit social network analyzing',
     author='M.Perfect',
     author_email='m.aali.pro@gmail.com',
     install_requires=dependencies,
