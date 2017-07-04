@@ -1,0 +1,24 @@
+env:
+  global:
+#  - COMMIT_AUTHOR_EMAIL: nothing@gmail.com
+#  - COVERALLS_REPO_TOKEN: hNuWdkZhIkl47DIpP7VSglh3zkAogq1oq
+language: python
+python:
+- 3.5
+before_install:
+- pip install -U pip setuptools wheel
+install: pip install -ve .
+script: coverage run --source hooshak $(which nosetests)
+#after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then travis_retry coveralls
+#  ; fi
+#deploy:
+#  provider: pypi
+#  skip_cleanup: true
+#  user: Nothing.Nothing
+#  password:
+#    secure: Nothing
+#  on:
+#    tags: true
+#    distributions: sdist bdist_wheel
+#    repo: mahdi13/hooshak
+#    all_branches: true
