@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 dependencies = [
     'python-igraph',
+    'pymlconf >= 0.7.1',
 
     # Testing
     'nose',
