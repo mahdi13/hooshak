@@ -1,14 +1,12 @@
+from hooshak.modeling import HooshakEntityMixin
 
 
 class Warehouse:
-
-    def update_entities(self, *entities):
+    def add_entities(self, *entities: HooshakEntityMixin):
         pass
 
-    def update_activities(self, *activities):
+    def add_activities(self, *activities):
         pass
 
-    def update_users(self, *users):
+    def app_users(self, *users):
         pass
-
-warehouse = Warehouse()
