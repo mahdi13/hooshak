@@ -82,12 +82,12 @@ class WarehouseTestCase(BaseHooshakTest):
 
         print_time_offset()
         activities = []
-        for i in range(10000):
-            like = Like()
-            like.by_id = random.randint(10000000, 10001000)
-            like.on_id = random.randint(10000000, 10001000)
-            like.value = random.randint(1, 99)
-            activities.append(like)
+        for i,j in zip(range(10000), range(10000)):
+                like = Like()
+                like.by_id = i + 10000000
+                like.on_id = j + 10000000
+                like.value = 10
+                activities.append(like)
         print_time_offset()
         hooshex.warehouse.add_activities(*activities)
         print_time_offset()
