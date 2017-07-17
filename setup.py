@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 dependencies = [
     'python-igraph',
+    'graph-tool',
     'pymlconf >= 0.7.1',
 
     # Testing
