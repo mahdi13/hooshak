@@ -1,4 +1,5 @@
 
 
-FROM ubuntu:16.04
+FROM pypi/graph-tool:lastest
 
+RUN echo "Hello World!"
