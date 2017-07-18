@@ -1,5 +1,5 @@
 
 
-FROM pypi/graph-tool:lastest
+FROM pypi/graph-tool
 
 RUN echo "Hello World!"
