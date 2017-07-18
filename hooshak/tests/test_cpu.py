@@ -1,3 +1,5 @@
+import functools
+import operator
 import os
 import random
 import re
@@ -57,12 +59,12 @@ def print_time_offset():
     last_time = time.time()
 
 
-class WarehouseTestCase(BaseHooshakTest):
-    def test_warehouse_entity(self):
+class CPUTestCase(BaseHooshakTest):
+    def test_cpu_entity(self):
 
         print_time_offset()
         entities = []
-        for i in range(10000):
+        for i in range(1000):
             location = Location()
             location.name = f'location{i}'
             location.id = i + 10000000
@@ -72,7 +74,7 @@ class WarehouseTestCase(BaseHooshakTest):
 
         print_time_offset()
         users = []
-        for i in range(10000):
+        for i in range(1000):
             client = Client()
             client.name = f'client{i}'
             client.id = i + 10000000
@@ -85,19 +87,21 @@ class WarehouseTestCase(BaseHooshakTest):
         for i in range(100):
             for j in range(100):
                 like = Like()
-                like.by_id = i + 10000000
-                like.on_id = j + 10000000
-                like.value = 10
+                like.by_id = random.randint(1, 999) + 10000000
+                like.on_id = random.randint(1, 999) + 10000000
+                like.value = random.randint(1, 99)
                 activities.append(like)
         print_time_offset()
         hooshex.warehouse.add_activities(*activities)
         print_time_offset()
 
+        for u in users[:5]:
+            for e in entities[:5]:
+                result = hooshex.cpu.calculate_smart_score(user=u, entity=e)
+                if result and len(result) > 0:
+                    print('%s item %s' % (len(result), int(functools.reduce(operator.add, result, 1) / len(result))))
 
-
-        ########################################
-
-
+        print_time_offset()
 
 
 if __name__ == '__main__':  # pragma: no cover

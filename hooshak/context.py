@@ -4,7 +4,7 @@ from hooshak.cpu import CPU
 
 class _Context:
     warehouse = Warehouse()
-    cpu = CPU
+    cpu = CPU(warehouse.g)
 
 
 hooshex = _Context()

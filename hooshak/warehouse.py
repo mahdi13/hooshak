@@ -64,3 +64,12 @@ class Warehouse:
             # self.g.add_vertices(len(users))
             # self.g.vs[offset:]['name'] = [str(u.get_hooshak_uid()) for u in users]
             # self.g.vs[offset:]['type'] = 'user'
+
+    def get_user_v_by_uid(self, uid: int):
+        return self.map_vertex_users[str(uid)]
+
+    def get_entity_v_by_uid(self, uid: int):
+        return self.map_vertex_entities[str(uid)]
+
+    def get_activity_by_uid(self, uid: int):
+        return self.map_edges[str(uid)]

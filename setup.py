@@ -1,10 +1,12 @@
 from setuptools import setup, find_packages
 
 dependencies = [
+    # 'gremlinpython',
     'numpy',
     'scipy',
     'boost',
-    'python-igraph',
+    # 'graph-tool',
+    # 'python-igraph',
     'pymlconf >= 0.7.1',
 
     # Testing
