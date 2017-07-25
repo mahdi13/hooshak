@@ -11,9 +11,11 @@ class Warehouse:
     map_edges = {}
 
     def __init__(self):
-        self.vprop_type = self.g.new_vertex_property('string')
-        self.eprop_value = self.g.new_edge_property('int')
-        self.eprop_timestamp = self.g.new_edge_property('int')
+        self.g.properties[('v', 'uid')] = self.g.new_vp("string")
+        self.g.properties[('v', 'type')] = self.g.new_vp("string")
+        self.g.properties[('e', 'value')] = self.g.new_ep("int")
+        self.g.properties[('e', 'timestamp')] = self.g.new_ep("int")
+        self.vprop_type = self.g.new_vp('string')
 
     def add_entities(self, *entities: HooshakEntityMixin):
 
@@ -69,18 +71,20 @@ class Warehouse:
     def add_user(self, uid):
         v = self.g.add_vertex()
         self.map_vertex_users.update({uid: v})
-        self.vprop_type[v] = 'user'
+        self.g.properties[('v', 'uid')][v] = uid
+        self.g.properties[('v', 'type')][v] = 'user'
 
     def add_entity(self, uid):
         v = self.g.add_vertex()
         self.map_vertex_entities.update({uid: v})
-        self.vprop_type[v] = 'entity'
+        self.g.properties[('v', 'uid')][v] = uid
+        self.g.properties[('v', 'type')][v] = 'entity'
 
     def add_activity(self, user_uid, entity_uid, value, timestamp):
         e = self.g.add_edge(source=self.map_vertex_users[user_uid],
                             target=self.map_vertex_entities[entity_uid])
-        self.eprop_value[e] = value
-        self.eprop_timestamp[e] = timestamp
+        self.g.properties[('e', 'value')][e] = value
+        self.g.properties[('e', 'timestamp')][e] = timestamp
 
     def get_user_v_by_uid(self, uid):
         return self.map_vertex_users[str(uid)]
@@ -90,3 +94,17 @@ class Warehouse:
 
     def get_activity_by_uid(self, uid):
         return self.map_edges[str(uid)]
+
+    def save(self, uri):
+        self.g.save(uri)
+
+    def load(self, uri):
+        self.g = load_graph(uri)
+
+        for v in self.g.get_vertices():
+            v_type = self.g.properties[('v', 'type')][v]
+            uid = self.g.properties[('v', 'uid')][v]
+            if v_type == 'user':
+                self.map_vertex_users.update({uid: v})
+            elif v_type == 'entity':
+                self.map_vertex_entities.update({uid: v})
