@@ -13,6 +13,7 @@ class Warehouse:
     def __init__(self):
         self.vprop_type = self.g.new_vertex_property('string')
         self.eprop_value = self.g.new_edge_property('int')
+        self.eprop_timestamp = self.g.new_edge_property('int')
 
     def add_entities(self, *entities: HooshakEntityMixin):
 
@@ -65,11 +66,27 @@ class Warehouse:
             # self.g.vs[offset:]['name'] = [str(u.get_hooshak_uid()) for u in users]
             # self.g.vs[offset:]['type'] = 'user'
 
-    def get_user_v_by_uid(self, uid: int):
+    def add_user(self, uid):
+        v = self.g.add_vertex()
+        self.map_vertex_users.update({uid: v})
+        self.vprop_type[v] = 'user'
+
+    def add_entity(self, uid):
+        v = self.g.add_vertex()
+        self.map_vertex_entities.update({uid: v})
+        self.vprop_type[v] = 'entity'
+
+    def add_activity(self, user_uid, entity_uid, value, timestamp):
+        e = self.g.add_edge(source=self.map_vertex_users[user_uid],
+                            target=self.map_vertex_entities[entity_uid])
+        self.eprop_value[e] = value
+        self.eprop_timestamp[e] = timestamp
+
+    def get_user_v_by_uid(self, uid):
         return self.map_vertex_users[str(uid)]
 
-    def get_entity_v_by_uid(self, uid: int):
+    def get_entity_v_by_uid(self, uid):
         return self.map_vertex_entities[str(uid)]
 
-    def get_activity_by_uid(self, uid: int):
+    def get_activity_by_uid(self, uid):
         return self.map_edges[str(uid)]
