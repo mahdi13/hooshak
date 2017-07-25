@@ -207,29 +207,30 @@ def make_beautiful():
 if __name__ == '__main__':
     warehouse = hooshex.warehouse
 
-    calculate_rows()
-    calculate_unique_users()
-    calculate_unique_entities()
-    calculate_user_activities()
+    # calculate_rows()
+    # calculate_unique_users()
+    # calculate_unique_entities()
+    # calculate_user_activities()
     # make_beautiful()
 
     timer = HTimer()
 
-    # timer.start()
-    # read()
-    # timer.end_and_print()
+    timer.start()
+    read()
+    timer.end_and_print()
 
-    # timer.start()
+    timer.start()
     # warehouse.save('../../datasource/ratings_Movies_and_TV.gt')
+    warehouse.save('../../datasource/beautiful_ratings_Movies_and_TV.gt')
+    timer.end_and_print()
+
+    # timer.start()
+    # warehouse.load('../../datasource/ratings_Movies_and_TV.gt')
     # timer.end_and_print()
 
-    timer.start()
-    warehouse.load('../../datasource/ratings_Movies_and_TV.gt')
-    timer.end_and_print()
-
-    timer.start()
-    find_usable()
-    timer.end_and_print()
+    # timer.start()
+    # find_usable()
+    # timer.end_and_print()
 
     cpu = hooshex.cpu
     while True:
