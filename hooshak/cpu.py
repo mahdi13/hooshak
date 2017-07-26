@@ -40,6 +40,16 @@ class CPU:
     #         return out
 
     def calculate_smart_score(self, user_uid, entity_uid):
+        """
+
+        
+
+        :param user_uid:
+        :param entity_uid:
+        :return:
+        """
+
+
         out = []
         from hooshak.context import hooshex
         for path in all_paths(
@@ -51,11 +61,14 @@ class CPU:
 
         ):
             if len(path) == 4:
-                out.append((
+
+
+
+                out.append(round((
                                hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[0], path[1])] *
-                               hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[1], path[2])] *
+                               hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[2], path[1])] *
                                hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[2], path[3])]) ** (1. / 3.)
-                           )
+                                 ))
                 # elif len(path) == 2:
                 #     return None
                 #
@@ -69,4 +82,4 @@ class CPU:
                 #     # return out
                 #     # out.append('shit')
 
-            return out
+        return out

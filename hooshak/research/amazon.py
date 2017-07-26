@@ -1,6 +1,8 @@
+import os
 import csv
 import functools
 import operator
+import random
 
 from hooshak import wise
 from hooshak.context import hooshex
@@ -23,10 +25,12 @@ beautiful_ratings_Movies_and_TV.csv:
 
     first: ['A29X9U79LWG6YT', 'B00JH4SZWK', 4, 1406073600]  --->  Wednesday, July 23, 2014 12:00:00 AM
     last:  ['A1127LKNR08JJK', '630174411X', 4, 879379200]   --->  Thursday, November 13, 1997 12:00:00 AM
+    
+    Research Items: 1,352,561 (70%) 
+    Predict Items:    579,669 (30%) 
 
 
 """
-
 
 class User(HooshakUserMixin):
     def __init__(self, uid):
@@ -37,7 +41,7 @@ class User(HooshakUserMixin):
 
 
 # csv_uri = '../../datasource/ratings_Movies_and_TV.csv'
-csv_uri = '../../datasource/beautiful_ratings_Movies_and_TV.csv'
+csv_uri = '../../datasource/beautiful_ratings_Movies_and_TV_reverse.csv'
 csv_delimiter = ','
 
 
@@ -153,7 +157,7 @@ def make_beautiful():
     beautiful_rows = []
     user_dict = {}
 
-    with open(csv_uri, 'r') as csv_file:
+    with open('../../datasource/ratings_Movies_and_TV.csv', 'r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=csv_delimiter)
         for row in csv_reader:
             row[2] = int(row[2][0])
@@ -175,7 +179,7 @@ def make_beautiful():
     #             print(counter)
     #
     # beautiful_rows.sort(key=operator.itemgetter(3), reverse=True)
-    beautiful_csv_uri = '../../datasource/beautiful_ratings_Movies_and_TV.csv'
+    beautiful_csv_uri = '../../datasource/beautiful_ratings_Movies_and_TV_reverse.csv'
     #
     # print('Writing...')
     #
@@ -193,7 +197,7 @@ def make_beautiful():
             beautiful_counter += 1
     print(f'Beautiful count: {beautiful_counter}')
 
-    beautiful_rows.sort(key=operator.itemgetter(3), reverse=True)
+    beautiful_rows.sort(key=operator.itemgetter(3), reverse=False)
     print(beautiful_rows[0])
     print(beautiful_rows[-1])
 
@@ -202,6 +206,79 @@ def make_beautiful():
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         for row in beautiful_rows:
             spamwriter.writerow(row)
+
+
+def seek_and_predict():
+    predict_count = 0
+    err_sum = 0
+    total_err_percent = 0
+    last_1000_err = []
+
+    warehouse = hooshex.warehouse
+    with open(csv_uri, 'r') as csv_file:
+        row_number = 0
+        csv_reader = csv.reader(csv_file, delimiter=csv_delimiter)
+        for row in csv_reader:
+            user_uid = row[0]
+            entity_uid = row[1]
+            value = row[2]
+            timestamp = row[3]
+
+            if row_number > 10000:
+                try:
+                    raw_predict = hooshex.cpu.calculate_smart_score(user_uid, entity_uid)
+                    hooshak_predict = int(functools.reduce(operator.add, raw_predict, 1) / len(raw_predict))
+                    # hooshak_predict = 5
+                    reality = int(value)
+                    # print(f'About {row} in row number : {row_number}')
+                    # print(f'Raw predict {raw_predict}')
+                    # print(f'Hooshak vs Reality: {hooshak_predict} vs {reality}')
+                    # print('\n')
+
+                    predict_count += 1
+                    this_err = abs(reality - hooshak_predict)
+                    err_sum += this_err
+
+                    last_1000_err.append(this_err)
+                    if len(last_1000_err) > 1000:
+                        last_1000_err.pop(0)
+
+                    total_err_percent = (err_sum / predict_count) * 25
+
+                    os.system('clear')
+                    print(f'timestamp {timestamp}')
+                    print(f'this_err {this_err}')
+                    print(f'predict_count {predict_count}')
+                    print(f'err_sum {err_sum}')
+                    print(f'total_err_percent {total_err_percent}')
+                    print(f'last_10_err {last_1000_err[-10:]}')
+                    print(f'last_1000_err_percent {functools.reduce(operator.add, last_1000_err, 1) / 40}')
+                except KeyError:
+                    # print(f'KeyError: {user_uid} or {entity_uid}')
+                    # print('\n')
+                    pass
+                except TypeError:
+                    # print(f'TypeError: {user_uid} or {entity_uid}')
+                    # print('\n')
+                    pass
+                except ZeroDivisionError:
+                    # print(f'TypeError: {user_uid} or {entity_uid}')
+                    # print('\n')
+                    pass
+
+            try:
+                warehouse.get_user_v_by_uid(user_uid)
+            except KeyError:
+                warehouse.add_user(user_uid)
+            try:
+                warehouse.get_entity_v_by_uid(entity_uid)
+            except KeyError:
+                warehouse.add_entity(entity_uid)
+            warehouse.add_activity(user_uid, entity_uid, int(value[0]), int(timestamp))
+
+            row_number += 1
+            # if row_number == 1000000:
+            #     break
 
 
 if __name__ == '__main__':
@@ -215,14 +292,14 @@ if __name__ == '__main__':
 
     timer = HTimer()
 
-    timer.start()
-    read()
-    timer.end_and_print()
+    # timer.start()
+    # read()
+    # timer.end_and_print()
 
-    timer.start()
-    # warehouse.save('../../datasource/ratings_Movies_and_TV.gt')
-    warehouse.save('../../datasource/beautiful_ratings_Movies_and_TV.gt')
-    timer.end_and_print()
+    # timer.start()
+    # # warehouse.save('../../datasource/ratings_Movies_and_TV.gt')
+    # warehouse.save('../../datasource/beautiful_ratings_Movies_and_TV_reverse.gt')
+    # timer.end_and_print()
 
     # timer.start()
     # warehouse.load('../../datasource/ratings_Movies_and_TV.gt')
@@ -232,12 +309,14 @@ if __name__ == '__main__':
     # find_usable()
     # timer.end_and_print()
 
-    cpu = hooshex.cpu
-    while True:
-        inp = input("Type 2 param (separate with `,`)\n").split(',')
+    # cpu = hooshex.cpu
+    # while True:
+    #     inp = input("Type 2 param (separate with `,`)\n").split(',')
+    #
+    #     result = hooshex.cpu.calculate_smart_score(inp[0], inp[1])
+    #     if result and len(result) > 0:
+    #         print('%s item %s' % (len(result), int(functools.reduce(operator.add, result, 1) / len(result))))
+    #
+    #         # print('Hello')
 
-        result = hooshex.cpu.calculate_smart_score(inp[0], inp[1])
-        if result and len(result) > 0:
-            print('%s item %s' % (len(result), int(functools.reduce(operator.add, result, 1) / len(result))))
-
-            # print('Hello')
+    seek_and_predict()
