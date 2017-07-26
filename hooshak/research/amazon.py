@@ -67,8 +67,8 @@ def read():
             warehouse.add_activity(user_uid, entity_uid, int(value[0]), int(timestamp))
 
             row_number += 1
-            if row_number == 1000000:
-                break
+            # if row_number == 1000000:
+            #     break
 
         print(f'Total rows: {row_number}')
 
