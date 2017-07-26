@@ -214,6 +214,10 @@ def seek_and_predict():
     total_err_percent = 0
     last_1000_err = []
 
+    average_err_sum = 0
+    average_total_err_percent = 0
+    average_last_1000_err = []
+
     warehouse = hooshex.warehouse
     with open(csv_uri, 'r') as csv_file:
         row_number = 0
@@ -226,8 +230,9 @@ def seek_and_predict():
 
             if row_number > 10000:
                 try:
+                    average_predict = int(hooshex.cpu.calculate_average_vote(user_uid, entity_uid))
                     raw_predict = hooshex.cpu.calculate_smart_score(user_uid, entity_uid)
-                    hooshak_predict = int(functools.reduce(operator.add, raw_predict, 1) / len(raw_predict))
+                    hooshak_predict = int(raw_predict)
                     # hooshak_predict = 5
                     reality = int(value)
                     # print(f'About {row} in row number : {row_number}')
@@ -246,6 +251,9 @@ def seek_and_predict():
                     total_err_percent = (err_sum / predict_count) * 25
 
                     os.system('clear')
+                    print(f'average_predict {average_predict}')
+                    print(f'hooshak_predict {hooshak_predict}')
+                    print(f'reality {reality}')
                     print(f'timestamp {timestamp}')
                     print(f'this_err {this_err}')
                     print(f'predict_count {predict_count}')
@@ -253,6 +261,25 @@ def seek_and_predict():
                     print(f'total_err_percent {total_err_percent}')
                     print(f'last_10_err {last_1000_err[-10:]}')
                     print(f'last_1000_err_percent {functools.reduce(operator.add, last_1000_err, 1) / 40}')
+
+                    predict_count += 1
+                    average_this_err = abs(reality - average_predict)
+                    average_err_sum += average_this_err
+
+                    average_last_1000_err.append(average_this_err)
+                    if len(average_last_1000_err) > 1000:
+                        average_last_1000_err.pop(0)
+
+                    average_total_err_percent = (average_err_sum / predict_count) * 25
+                    print(f'\n')
+                    print(f'average_this_err {average_this_err}')
+                    print(f'average_predict_count {predict_count}')
+                    print(f'average_err_sum {average_err_sum}')
+                    print(f'average_total_err_percent {average_total_err_percent}')
+                    print(f'average_last_10_err {average_last_1000_err[-10:]}')
+                    print(f'average_last_1000_err_percent {functools.reduce(operator.add, average_last_1000_err, 1) / 40}')
+
+
                 except KeyError:
                     # print(f'KeyError: {user_uid} or {entity_uid}')
                     # print('\n')

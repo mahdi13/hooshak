@@ -1,3 +1,6 @@
+import functools
+import operator
+
 from graph_tool.all import *
 
 from hooshak.modeling import HooshakEntityMixin, HooshakUserMixin
@@ -39,6 +42,22 @@ class CPU:
     #
     #         return out
 
+    def calculate_average_vote(self, user_uid, entity_uid):
+        from hooshak.context import hooshex
+
+        coefficient_sum = 0
+        value_sum = 0
+        source = hooshex.warehouse.map_vertex_entities[entity_uid]
+        for v in hooshex.warehouse.map_vertex_entities[entity_uid].all_neighbours():
+            try:
+                e = self.g.edge(v, source)
+                value_sum += self.g.properties[('e', 'value')][e]
+                coefficient_sum += 1
+            except:
+                pass
+
+        return value_sum / coefficient_sum
+
     def calculate_smart_score(self, user_uid, entity_uid):
         """
 
@@ -65,8 +84,9 @@ class CPU:
         :return:
         """
 
+        path_list = []
+        coefficient_sum = 0
 
-        out = []
         from hooshak.context import hooshex
         for path in all_paths(
                 g=self.g,
@@ -77,14 +97,18 @@ class CPU:
 
         ):
             if len(path) == 4:
+                alpha = hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[0], path[1])]
+                beta = hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[2], path[1])]
+                gamma = hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[2], path[3])]
 
+                distance = abs(alpha - beta)
+                # simil = (4 - distance) / 4
+                # simil = (1 / (distance+1))
+                simil = 1
 
-
-                out.append(round((
-                               hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[0], path[1])] *
-                               hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[2], path[1])] *
-                               hooshex.warehouse.g.properties[('e', 'value')][self.g.edge(path[2], path[3])]) ** (1. / 3.)
-                                 ))
+                # path_list.append(round((alpha * beta * gamma) ** (1. / 3.)))
+                path_list.append(simil * gamma)
+                coefficient_sum += simil
                 # elif len(path) == 2:
                 #     return None
                 #
@@ -98,4 +122,5 @@ class CPU:
                 #     # return out
                 #     # out.append('shit')
 
-        return out
+        # return functools.reduce(operator.add, path_list, 1) / len(path_list)
+        return functools.reduce(operator.add, path_list, 1) / coefficient_sum
