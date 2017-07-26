@@ -42,6 +42,7 @@ class User(HooshakUserMixin):
 
 # csv_uri = '../../datasource/ratings_Movies_and_TV.csv'
 csv_uri = '../../datasource/beautiful_ratings_Movies_and_TV_reverse.csv'
+# csv_uri = '../../datasource/simple_test.csv'
 csv_delimiter = ','
 
 
@@ -228,11 +229,11 @@ def seek_and_predict():
             value = row[2]
             timestamp = row[3]
 
-            if row_number > 10000:
+            if row_number > -1:
                 try:
                     average_predict = int(hooshex.cpu.calculate_average_vote(user_uid, entity_uid))
                     raw_predict = hooshex.cpu.calculate_smart_score(user_uid, entity_uid)
-                    hooshak_predict = int(raw_predict)
+                    hooshak_predict = int(round(raw_predict))
                     # hooshak_predict = 5
                     reality = int(value)
                     # print(f'About {row} in row number : {row_number}')
@@ -260,9 +261,8 @@ def seek_and_predict():
                     print(f'err_sum {err_sum}')
                     print(f'total_err_percent {total_err_percent}')
                     print(f'last_10_err {last_1000_err[-10:]}')
-                    print(f'last_1000_err_percent {functools.reduce(operator.add, last_1000_err, 1) / 40}')
+                    print(f'last_1000_err_percent {functools.reduce(operator.add, last_1000_err) / (len(last_1000_err) / 25 )}')
 
-                    predict_count += 1
                     average_this_err = abs(reality - average_predict)
                     average_err_sum += average_this_err
 
@@ -277,7 +277,7 @@ def seek_and_predict():
                     print(f'average_err_sum {average_err_sum}')
                     print(f'average_total_err_percent {average_total_err_percent}')
                     print(f'average_last_10_err {average_last_1000_err[-10:]}')
-                    print(f'average_last_1000_err_percent {functools.reduce(operator.add, average_last_1000_err, 1) / 40}')
+                    print(f'average_last_1000_err_percent {functools.reduce(operator.add, average_last_1000_err) / 40}')
 
 
                 except KeyError:
@@ -342,7 +342,7 @@ if __name__ == '__main__':
     #
     #     result = hooshex.cpu.calculate_smart_score(inp[0], inp[1])
     #     if result and len(result) > 0:
-    #         print('%s item %s' % (len(result), int(functools.reduce(operator.add, result, 1) / len(result))))
+    #         print('%s item %s' % (len(result), int(functools.reduce(operator.add, result) / len(result))))
     #
     #         # print('Hello')
 

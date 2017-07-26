@@ -99,7 +99,7 @@ class CPUTestCase(BaseHooshakTest):
             for e in entities[:5]:
                 result = hooshex.cpu.calculate_smart_score(user=u, entity=e)
                 if result and len(result) > 0:
-                    print('%s item %s' % (len(result), int(functools.reduce(operator.add, result, 1) / len(result))))
+                    print('%s item %s' % (len(result), int(functools.reduce(operator.add, result) / len(result))))
 
         print_time_offset()
 

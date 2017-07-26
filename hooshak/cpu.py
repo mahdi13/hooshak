@@ -84,6 +84,9 @@ class CPU:
         :return:
         """
 
+        per_user_value = {}
+        per_user_simil = {}
+
         path_list = []
         coefficient_sum = 0
 
@@ -103,12 +106,13 @@ class CPU:
 
                 distance = abs(alpha - beta)
                 # simil = (4 - distance) / 4
+                simil = (4 - distance)
                 # simil = (1 / (distance+1))
-                simil = 1
+                # simil = 1
 
                 # path_list.append(round((alpha * beta * gamma) ** (1. / 3.)))
-                path_list.append(simil * gamma)
-                coefficient_sum += simil
+                # path_list.append(simil * gamma)
+                # coefficient_sum += simil
                 # elif len(path) == 2:
                 #     return None
                 #
@@ -122,5 +126,27 @@ class CPU:
                 #     # return out
                 #     # out.append('shit')
 
-        # return functools.reduce(operator.add, path_list, 1) / len(path_list)
-        return functools.reduce(operator.add, path_list, 1) / coefficient_sum
+                if str(path[2]) in per_user_value:
+                    per_user_simil[str(path[2])].append(simil)
+                else:
+                    per_user_simil.update({str(path[2]): [simil]})
+                    per_user_value.update({str(path[2]): gamma})
+
+        # return functools.reduce(operator.add, path_list) / len(path_list)
+        # return functools.reduce(operator.add, path_list) / coefficient_sum
+
+        per_result_list = []
+        per_coefficient_sum = 0
+        for user, simils in per_user_simil.items():
+            value = per_user_value[user]
+            simil_sum = functools.reduce(operator.add, simils)
+            simil_avr = simil_sum / len(simils)
+
+            # if simil_avr < 3:
+            #     continue
+
+            per_coefficient_sum += simil_avr
+            per_result_list.append(value * simil_avr)
+
+        return functools.reduce(operator.add, per_result_list) / per_coefficient_sum
+
