@@ -42,7 +42,23 @@ class CPU:
     def calculate_smart_score(self, user_uid, entity_uid):
         """
 
-        
+                                        Third person
+                                 gamma     +---+      beta
+                                +----------+   +------------+
+                                |          +---+            |
+                                |                           |
+                                v                           v
+                               XX                           XX
+                              XXXX                         X  X
+            Selected entity  XXXXXX                       X    X  Third entity
+                              XXXX                         X  X
+                               XX                           XX
+                                ^                           ^
+                                |          +++++            |
+                                +----------+++++------------+
+                                 unknown   +++++    alpha
+                                            Me
+
 
         :param user_uid:
         :param entity_uid:
