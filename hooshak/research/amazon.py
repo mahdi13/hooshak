@@ -229,7 +229,7 @@ def seek_and_predict():
             value = row[2]
             timestamp = row[3]
 
-            if row_number > -1:
+            if row_number > 10000:
                 try:
                     average_predict = int(hooshex.cpu.calculate_average_vote(user_uid, entity_uid))
                     raw_predict = hooshex.cpu.calculate_smart_score(user_uid, entity_uid)
