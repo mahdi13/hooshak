@@ -1,6 +1,8 @@
 # Hooshak
 A social intelligent recommender in order to make your apps smarter
 
+Thanks to [Julian McAuley, UCSD](http://cseweb.ucsd.edu/~jmcauley/), we are using Amazon rating dataset.
+
 ## Branches
 
 ### master
