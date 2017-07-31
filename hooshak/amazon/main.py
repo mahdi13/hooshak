@@ -1,5 +1,6 @@
 import threading
 
+from hooshak.amazon.calculation import ErrorCalculator
 from hooshak.configurations import settings
 from hooshak.context import hooshex
 from hooshak.amazon.importer import AmazonImporter
@@ -10,6 +11,7 @@ The goal is to finding the algorithm with minimum error.
 
 """
 
+
 def run():
     lines_to_learn = settings.amazon.lines_to_learn
     learned_count = 0
@@ -18,7 +20,7 @@ def run():
     predicted_count = 0
 
     # Error
-
+    error_calculator = ErrorCalculator()
 
     for useruid, entityuid, value, timestamp in AmazonImporter.seek_file():
         if learned_count <= lines_to_learn:
@@ -29,18 +31,33 @@ def run():
 
             if learned_count == lines_to_learn:
                 print(f'Learn finished! {learned_count} Item learned.')
-                break
 
             learned_count += 1
 
-        else:
+        elif predicted_count <= lines_to_predict:
             # It is time to predict!
 
-            hooshak_predict = hooshex.wise.predict(user_uid=useruid, entity_uid=entityuid)
+            if not predicted_count % 10:
+                print(
+                    f'{int(predicted_count / lines_to_predict * 100)}% items predicted '
+                    f'with error: {error_calculator.average_percent}'
+                )
 
-            predicted_count
+            hooshak_predict = 3
+            # hooshak_predict = hooshex.wise.predict(user_uid=useruid, entity_uid=entityuid)
 
+            error_calculator.append(abs(hooshak_predict - value))
 
+            hooshex.wise.learn(user_uid=useruid, entity_uid=entityuid, value=value, timestamp=timestamp)
+
+            if predicted_count == lines_to_predict:
+                print(f'Prediction finished! {predicted_count} Item predicted.')
+                break
+
+            predicted_count += 1
+
+        else:
+            break
 
 
 if __name__ == '__main__':

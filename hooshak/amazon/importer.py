@@ -13,8 +13,8 @@ class AmazonImporter:
             for row in csv_reader:
                 user_uid = row[0]
                 entity_uid = row[1]
-                value = row[2]
-                timestamp = row[3]
+                value = int(row[2])
+                timestamp = int(row[3])
 
                 yield user_uid, entity_uid, value, timestamp
 
