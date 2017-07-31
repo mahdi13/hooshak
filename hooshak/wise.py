@@ -43,4 +43,14 @@ class Wise:
             else:
                 per_user.update({entity_uid: [(entity_uid, alpha, beta, gamma)]})
 
+        for third_user, entities in per_user.items():
+            target_values = []
+            third_usr_values = []
+            for entity_data in entities:
+                entity_uid, alpha, beta, gamma = entity_data[0], entity_data[1], entity_data[2], entity_data[3]
+                target_values.append(alpha)
+                third_usr_values.append(beta)
+
+            
+
         return 4

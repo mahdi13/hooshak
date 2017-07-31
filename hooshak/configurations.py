@@ -12,7 +12,8 @@ amazon:
   csv: %(root_path)s/datasource/beautiful_ratings_Movies_and_TV_reverse.csv
   # lines_to_learn: 2000000
   # lines_to_predict: 10000
-  lines_to_learn: 200000
+  # lines_to_learn: 200000
+  lines_to_learn: 20000
   lines_to_predict: 1000
 
 

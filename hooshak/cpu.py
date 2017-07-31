@@ -2,6 +2,7 @@ import functools
 import operator
 
 from graph_tool.all import *
+from sklearn.metrics import mean_squared_error
 
 from hooshak.modeling import HooshakEntityMixin, HooshakUserMixin
 
@@ -12,7 +13,7 @@ class CPU:
         self.g = warehouse.g
 
     def calculate_regression(self, target_values: list, third_party_values: list):
-        pass
+        return mean_squared_error(target_values, third_party_values)
 
     # def calculate_smart_score(self, user: HooshakUserMixin, entity: HooshakEntityMixin):
     #     out = []

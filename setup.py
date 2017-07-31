@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 dependencies = [
     # 'gremlinpython',
     'numpy',
+    'sklearn',
     'scipy',
     'boost',
     # 'graph-tool',
