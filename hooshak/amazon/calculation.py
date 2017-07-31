@@ -1,28 +1,41 @@
+from functools import reduce
+
+
 class ErrorCalculator:
-    def append(self):
-        pass
+    error_list = []
+
+    def __init__(self, error_min=0, error_max=4):
+        self.min = error_min
+        self.max = error_max
+        self.renew()
+
+    def renew(self):
+        self.error_list = []
+
+    def append(self, value):
+        self.error_list.append(value)
 
     def last_n_average_percent(self, n):
-        pass
+        return round(self.last_n_average_value(n) / (self.max - self.min) * 100)
 
     def last_n_total_value(self, n):
-        pass
+        return round(reduce(lambda x, y: x + y, self.error_list[-n:]), 2)
 
     def last_n_average_value(self, n):
-        pass
+        return round(reduce(lambda x, y: x + y, self.error_list[-n:]) / n, 2)
 
     @property
     def total_value(self):
-        pass
+        return reduce(lambda x, y: x + y, self.error_list)
 
     @property
     def total_count(self):
-        pass
+        return len(self.error_list)
 
     @property
     def average_value(self):
-        pass
+        return round(self.total_value / self.total_count)
 
     @property
     def average_percent(self):
-        pass
+        return round(self.average_value / (self.max - self.min) * 100, 2)
