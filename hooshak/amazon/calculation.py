@@ -24,6 +24,15 @@ class ErrorCalculator:
     def last_n_average_value(self, n):
         return round(reduce(lambda x, y: x + y, self.error_list[-n:]) / n, 2)
 
+    def first_n_average_percent(self, n):
+        return round((reduce(lambda x, y: x + y, self.error_list[:n]) / n) / (self.max - self.min) * 100, 2)
+
+    def first_n_total_value(self, n):
+        return round(reduce(lambda x, y: x + y, self.error_list[:n]), 2)
+
+    def first_n_average_value(self, n):
+        return round(reduce(lambda x, y: x + y, self.error_list[:n]) / n, 2)
+
     @property
     def total_value(self):
         return reduce(lambda x, y: x + y, self.error_list)
