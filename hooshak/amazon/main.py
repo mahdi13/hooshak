@@ -20,6 +20,7 @@ def run():
 
     lines_to_predict = settings.amazon.lines_to_predict
     predicted_count = 0
+    couldnt_predict_count = 0
 
     # Error
     error_calculator = ErrorCalculator()
@@ -45,8 +46,10 @@ def run():
                     f'with error: {error_calculator.average_percent}'
                 )
 
-            hooshak_predict = 4
-            # hooshak_predict = hooshex.wise.predict(user_uid=useruid, entity_uid=entityuid)
+            hooshak_predict = hooshex.wise.predict(user_uid=useruid, entity_uid=entityuid, timestamp=timestamp)
+            if hooshak_predict is None:
+                couldnt_predict_count += 1
+                continue
 
             error_calculator.append(abs(hooshak_predict - value))
 
@@ -63,6 +66,7 @@ def run():
             print('\n\n\n\n')
             print(f'Total learned items: {learned_count-1}', file=sys.stderr)
             print(f'Total predicted items: {predicted_count-1}', file=sys.stderr)
+            print(f'Total could not predicted items: {couldnt_predict_count}', file=sys.stderr)
 
             print('\n\n')
             print(f'Error total count items: {error_calculator.total_count}')

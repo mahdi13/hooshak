@@ -5,7 +5,7 @@ from hooshak.wise import Wise
 
 class _Context:
     warehouse = Warehouse()
-    cpu = CPU(warehouse.g)
+    cpu = CPU(warehouse)
     wise = Wise(warehouse, cpu)
 
 

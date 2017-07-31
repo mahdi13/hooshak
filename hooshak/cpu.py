@@ -7,8 +7,12 @@ from hooshak.modeling import HooshakEntityMixin, HooshakUserMixin
 
 
 class CPU:
-    def __init__(self, g: Graph):
-        self.g = g
+    def __init__(self, warehouse):
+        self.warehouse = warehouse
+        self.g = warehouse.g
+
+    def calculate_regression(self, target_values: list, third_party_values: list):
+        pass
 
     # def calculate_smart_score(self, user: HooshakUserMixin, entity: HooshakEntityMixin):
     #     out = []
@@ -61,7 +65,7 @@ class CPU:
     def calculate_smart_score(self, user_uid, entity_uid):
         """
 
-                                        Third person
+                                        Third person (2)
                                  gamma     +---+      beta
                                 +----------+   +------------+
                                 |          +---+            |
@@ -69,14 +73,14 @@ class CPU:
                                 v                           v
                                XX                           XX
                               XXXX                         X  X
-            Selected entity  XXXXXX                       X    X  Third entity
+        Selected entity (3)  XXXXXX                       X    X  Third entity (1)
                               XXXX                         X  X
                                XX                           XX
                                 ^                           ^
                                 |          +++++            |
                                 +----------+++++------------+
                                  unknown   +++++    alpha
-                                            Me
+                                            Me (0)
 
 
         :param user_uid:
@@ -150,3 +154,23 @@ class CPU:
 
         return functools.reduce(operator.add, per_result_list) / per_coefficient_sum
 
+    def seek_shared_activity_paths(self, user_uid, entity_uid):
+        for path in all_paths(
+                g=self.g,
+                source=self.warehouse.get_user_v_by_uid(user_uid),
+                target=self.warehouse.get_entity_v_by_uid(entity_uid),
+                cutoff=3
+
+        ):
+            if len(path) == 4:
+                alpha = self.warehouse.g.properties[('e', 'value')][self.g.edge(path[0], path[1])]
+                beta = self.warehouse.g.properties[('e', 'value')][self.g.edge(path[2], path[1])]
+                gamma = self.warehouse.g.properties[('e', 'value')][self.g.edge(path[2], path[3])]
+
+                yield self.warehouse.g.properties[('v', 'uid')][self.g.vertex(path[2])], \
+                      self.warehouse.g.properties[('v', 'uid')][self.g.vertex(path[1])], \
+                      alpha, \
+                      beta, \
+                      gamma
+
+        return None

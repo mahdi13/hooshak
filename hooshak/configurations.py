@@ -13,7 +13,7 @@ amazon:
   # lines_to_learn: 2000000
   # lines_to_predict: 10000
   lines_to_learn: 200000
-  lines_to_predict: 10000
+  lines_to_predict: 1000
 
 
 debug: true
