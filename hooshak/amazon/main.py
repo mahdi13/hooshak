@@ -10,12 +10,12 @@ The goal is to finding the algorithm with minimum error.
 
 """
 
-
 def run():
     lines_to_learn = settings.amazon.lines_to_learn
     learned_count = 0
 
     lines_to_predict = settings.amazon.lines_to_predict
+    predicted_count = 0
 
     # Error
 
@@ -38,6 +38,7 @@ def run():
 
             hooshak_predict = hooshex.wise.predict(user_uid=useruid, entity_uid=entityuid)
 
+            predicted_count
 
 
 
