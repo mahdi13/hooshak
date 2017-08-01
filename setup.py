@@ -17,7 +17,7 @@ dependencies = [
 
 setup(
     name='hooshak',
-    version='0.0.1',
+    version='0.1.1',
     description='A recommender system uses implicit social network analyzing',
     author='M.Perfect',
     author_email='m.aali.pro@gmail.com',
