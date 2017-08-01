@@ -1,6 +1,9 @@
 import functools
 import operator
 
+import numpy as np
+from sklearn import linear_model
+
 from graph_tool.all import *
 from sklearn.metrics import mean_squared_error
 
@@ -12,8 +15,33 @@ class CPU:
         self.warehouse = warehouse
         self.g = warehouse.g
 
-    def calculate_regression(self, target_values: list, third_party_values: list):
-        return mean_squared_error(target_values, third_party_values)
+    @classmethod
+    def make_regression(cls, target_values: list, third_party_values: list):
+
+        learn_x = [[item] for item in target_values]
+        learn_y = [[item] for item in third_party_values]
+
+        regr = linear_model.LinearRegression()
+        regr.fit(learn_x, learn_y)
+
+        return regr
+
+    @classmethod
+    def predict_by_regression(cls, regression: linear_model.LinearRegression, x):
+        return regression.predict(np.array([[x]]))[0][0]
+
+    @classmethod
+    def coefficient_by_regression(cls, regression: linear_model.LinearRegression):
+        return regression.coef_[0][0]
+
+    @classmethod
+    def mse_by_regression(cls, regression: linear_model.LinearRegression, target_values: list,
+                          third_party_values: list):
+
+        learn_x = [[item] for item in target_values]
+        learn_y = [[item] for item in third_party_values]
+
+        return np.mean((regression.predict(learn_x) - learn_y) ** 2)
 
     # def calculate_smart_score(self, user: HooshakUserMixin, entity: HooshakEntityMixin):
     #     out = []

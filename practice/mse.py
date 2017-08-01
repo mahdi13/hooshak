@@ -2,8 +2,11 @@ import numpy as np
 from sklearn import linear_model, datasets
 
 if __name__ == '__main__':
-    data_x = [1, 2, 3, 4]
-    data_y = [1, 2, 3, 4]
+    data_x = np.array([[1], [5], [1], [5], [5], [5], [5], [5], [5], [5], [1], [5], [1], [5], [5], [1], [5], [1], [5], [5], [1], [5], [1], [5], [5]])
+    data_y = np.array([[1], [1], [5], [5], [5], [5], [5], [5], [5], [1], [5], [1], [5], [5], [1], [5], [1], [5], [5], [1], [5], [1], [5], [5], [4]])
+
+    to_predict_data_x = np.array([[10]])
+    to_compare_data_y = np.array([[2400]])
 
     diabetes = datasets.load_diabetes()
     diabetes_X = diabetes.data[:, np.newaxis, 2]
